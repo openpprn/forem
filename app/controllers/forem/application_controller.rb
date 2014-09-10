@@ -58,9 +58,7 @@ or; 2) Set Forem.sign_in_path to a String value that represents the location of 
   private 
   
   def layout_for_forem
-    if forem_admin?
-      Forem.admin_layout
-    elsif current_user
+    if current_user
       Forem.logged_in_layout
     else
       Forem.main_layout

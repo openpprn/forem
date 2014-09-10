@@ -1,7 +1,7 @@
 require 'cancan'
 
 class Forem::ApplicationController < ApplicationController
-  layout Forem.layout
+  layout :layout_for_forem
   
   rescue_from CanCan::AccessDenied do
     redirect_to root_path, :alert => t("forem.access_denied")
@@ -55,4 +55,16 @@ or; 2) Set Forem.sign_in_path to a String value that represents the location of 
   end
   helper_method :forem_admin_or_moderator?
 
+  private 
+  
+  def layout_for_forem
+    if forem_admin?
+      Forem.admin_layout
+    elsif current_user
+      Forem.logged_in_layout
+    else
+      Forem.main_layout
+    end
+  end
+  
 end

@@ -23,7 +23,8 @@ module ::Forem
 end
 
 require 'simple_form'
-require 'emoji/railtie'
+# Requiring emoji/railtie is deprecated
+#require 'emoji/railtie'
 require 'select2-rails'
 
 # We need one of the two pagination engines loaded by this point.

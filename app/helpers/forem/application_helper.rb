@@ -1,3 +1,5 @@
+require 'emoji'
+
 module Forem
   module ApplicationHelper
     include FormattingHelper

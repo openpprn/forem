@@ -1,8 +1,11 @@
 require 'cancan'
 
 class Forem::ApplicationController < ApplicationController
-  layout :layout_for_forem
-  
+  # Add theme folder to view path
+  self.view_paths.unshift(*Rails.root.join('app', 'views', 'myapnea'))
+
+  layout :layout_for_forem 
+
   rescue_from CanCan::AccessDenied do
     redirect_to root_path, :alert => t("forem.access_denied")
   end

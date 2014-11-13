@@ -31,7 +31,7 @@ class Forem::ApplicationController < ApplicationController
   def authenticate_forem_user
     if !forem_user
       session["user_return_to"] = request.fullpath
-      flash.alert = t("forem.errors.not_signed_in")
+      flash.alert = "To post on the forum, you must be a registered MyApnea.Org user. [Click here](#{main_app.new_registra}) to join today!"
       devise_route = "new_#{Forem.user_class.to_s.underscore}_session_path"
       sign_in_path = Forem.sign_in_path ||
         (main_app.respond_to?(devise_route) && main_app.send(devise_route)) ||

@@ -4,10 +4,11 @@ class Forem::ApplicationController < ApplicationController
   # Add theme folder to view path
   self.view_paths.unshift(*Rails.root.join('app', 'views', 'myapnea'))
 
-  layout :layout_for_forem 
+  layout :layout_for_forem
 
-  rescue_from CanCan::AccessDenied do
-    redirect_to root_path, :alert => t("forem.access_denied")
+  rescue_from CanCan::AccessDenied do |exception|
+    session[:return] = true
+    redirect_to main_app.social_profile_path, :alert => "To post on the MyApnea.Org forums and join the MyApnea.Org community, create your own social profile below."
   end
 
   def current_ability
@@ -31,11 +32,11 @@ class Forem::ApplicationController < ApplicationController
   def authenticate_forem_user
     if !forem_user
       session["user_return_to"] = request.fullpath
-      flash.alert = "To post on the forum, you must be a registered MyApnea.Org user. [Click here](#{main_app.new_registra}) to join today!"
+      flash.alert = "To post on the forum, you must be a registered MyApnea.Org user. [Click here](#{main_app.new_user_registration_path}) to join today!"
       devise_route = "new_#{Forem.user_class.to_s.underscore}_session_path"
       sign_in_path = Forem.sign_in_path ||
-        (main_app.respond_to?(devise_route) && main_app.send(devise_route)) ||
-        (main_app.respond_to?(:sign_in_path) && main_app.send(:sign_in_path))
+          (main_app.respond_to?(devise_route) && main_app.send(devise_route)) ||
+          (main_app.respond_to?(:sign_in_path) && main_app.send(:sign_in_path))
       if sign_in_path
         redirect_to sign_in_path
       else
@@ -58,8 +59,8 @@ or; 2) Set Forem.sign_in_path to a String value that represents the location of 
   end
   helper_method :forem_admin_or_moderator?
 
-  private 
-  
+  private
+
   def layout_for_forem
     if current_user
       Forem.logged_in_layout
@@ -67,5 +68,5 @@ or; 2) Set Forem.sign_in_path to a String value that represents the location of 
       Forem.main_layout
     end
   end
-  
+
 end

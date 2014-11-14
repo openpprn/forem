@@ -81,7 +81,12 @@ module Forem
     def create_failed
       params[:reply_to_id] = params[:post][:reply_to_id]
       flash.now.alert = t("forem.post.not_created")
-      render :action => "new"
+
+      if params[:source] == "topic"
+        redirect_to forum_topic_url(@topic.forum, @topic, pagination_param => @topic.last_page), alert: "Your comment could not be added. Please try again."
+      else
+        render :action => "new"
+      end
     end
 
     def destroy_successful
@@ -122,7 +127,7 @@ module Forem
     def block_spammers
       if forem_user.forem_spammer?
         flash[:alert] = t('forem.general.flagged_for_spam') + ' ' +
-                        t('forem.general.cannot_create_post')
+            t('forem.general.cannot_create_post')
         redirect_to :back
       end
     end

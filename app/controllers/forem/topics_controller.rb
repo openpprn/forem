@@ -9,6 +9,7 @@ module Forem
       if find_topic
         register_view(@topic, forem_user)
         @posts = find_posts(@topic)
+        @post = @topic.posts.build
 
         # Kaminari allows to configure the method and param used
         @posts = @posts.send(pagination_method, params[pagination_param]).per(Forem.per_page)
@@ -61,7 +62,7 @@ module Forem
     def topic_params
       params.require(:topic).permit(:subject, :posts_attributes => [[:text]])
     end
-    
+
     def create_successful
       redirect_to [@forum, @topic], :notice => t("forem.topic.created")
     end
@@ -124,7 +125,7 @@ module Forem
     def block_spammers
       if forem_user.forem_spammer?
         flash[:alert] = t('forem.general.flagged_for_spam') + ' ' +
-                        t('forem.general.cannot_create_topic')
+            t('forem.general.cannot_create_topic')
         redirect_to :back
       end
     end

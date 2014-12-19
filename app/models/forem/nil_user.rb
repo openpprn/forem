@@ -1,5 +1,5 @@
 module Forem
-  class NilUser < Forem.user_class
+  class NilUser
     def forem_email
       "nobody@example.com"
     end

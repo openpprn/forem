@@ -6,13 +6,17 @@ module Forem
     before_filter :block_spammers, :only => [:new, :create]
 
     def show
-      if find_topic
-        register_view(@topic, forem_user)
-        @posts = find_posts(@topic)
-        @post = @topic.posts.build
+      begin
+        if find_topic
+          register_view(@topic, forem_user)
+          @posts = find_posts(@topic)
+          @post = @topic.posts.build
 
-        # Kaminari allows to configure the method and param used
-        @posts = @posts.send(pagination_method, params[pagination_param]).per(Forem.per_page)
+          # Kaminari allows to configure the method and param used
+          @posts = @posts.send(pagination_method, params[pagination_param]).per(Forem.per_page)
+        end
+      rescue Exception => e
+        forums_path
       end
     end
 

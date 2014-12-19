@@ -16,7 +16,7 @@ module Forem
           @posts = @posts.send(pagination_method, params[pagination_param]).per(Forem.per_page)
         end
       rescue Exception => e
-        forums_path
+        redirect_to forums_path
       end
     end
 

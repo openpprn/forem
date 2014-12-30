@@ -15,7 +15,7 @@ end
 group :test do
   platforms :ruby, :mingw do
     gem "forem-redcarpet"
-    gem "mysql2"
+    #gem "mysql2"
     gem "pg"
     gem "sqlite3"
   end

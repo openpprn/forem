@@ -9,8 +9,8 @@ module Forem
 
     belongs_to :category
 
-    has_many :topics,     :dependent => :destroy
-    has_many :posts,      :through => :topics, :dependent => :destroy
+    has_many :topics, -> { where deleted: false },     :dependent => :destroy
+    has_many :posts, -> { where deleted: false },      :through => :topics, :dependent => :destroy
     has_many :moderators, :through => :moderator_groups, :source => :group
     has_many :moderator_groups
 

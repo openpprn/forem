@@ -5,6 +5,7 @@ module Forem
     include Forem::Concerns::Viewable
     include Forem::Concerns::NilUser
     include Workflow
+    include Forem::Concerns::Deletable
 
     workflow_column :state
     workflow do
@@ -26,7 +27,7 @@ module Forem
     belongs_to :forum
     belongs_to :forem_user, :class_name => Forem.user_class.to_s, :foreign_key => :user_id
     has_many   :subscriptions
-    has_many   :posts, -> { order "forem_posts.created_at ASC"}, :dependent => :destroy
+    has_many   :posts, -> { where(deleted: false).order("forem_posts.created_at ASC")}, :dependent => :destroy
     accepts_nested_attributes_for :posts
 
     validates :subject, :presence => true
@@ -38,7 +39,7 @@ module Forem
 
     class << self
       def visible
-        where(:hidden => false)
+        current.where(:hidden => false)
       end
 
       def by_pinned
@@ -58,16 +59,16 @@ module Forem
       end
 
       def pending_review
-        where(:state => 'pending_review')
+        current.where(:state => 'pending_review')
       end
 
       def approved
-        where(:state => 'approved')
+        current.where(:state => 'approved')
       end
 
       def approved_or_pending_review_for(user)
         if user
-          where("forem_topics.state = ? OR " +
+          current.where("forem_topics.state = ? OR " +
                 "(forem_topics.state = ? AND forem_topics.user_id = ?)",
                  'approved', 'pending_review', user.id)
         else

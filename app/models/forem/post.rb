@@ -2,6 +2,7 @@ module Forem
   class Post < ActiveRecord::Base
     include Workflow
     include Forem::Concerns::NilUser
+    include Forem::Concerns::Deletable
 
     workflow_column :state
     workflow do
@@ -36,12 +37,12 @@ module Forem
 
     class << self
       def approved
-        where(:state => "approved")
+        current.where(:state => "approved")
       end
 
       def approved_or_pending_review_for(user)
         if user
-          where arel_table[:state].eq('approved').or(
+          current.where arel_table[:state].eq('approved').or(
                   arel_table[:state].eq('pending_review').and(arel_table[:user_id].eq(user.id))
                 )
         else
@@ -54,19 +55,19 @@ module Forem
       end
 
       def pending_review
-        where :state => 'pending_review'
+        current.where :state => 'pending_review'
       end
 
       def spam
-        where :state => 'spam'
+        current.where :state => 'spam'
       end
 
       def visible
-        joins(:topic).where(:forem_topics => { :hidden => false })
+        current.joins(:topic).where(:forem_topics => { :hidden => false })
       end
 
       def topic_not_pending_review
-        joins(:topic).where(:forem_topics => { :state => 'approved'})
+        current.joins(:topic).where(:forem_topics => { :state => 'approved'})
       end
 
       def moderate!(posts)

@@ -87,6 +87,11 @@ module Forem
       user == other_user || other_user.forem_admin?
     end
 
+    def destroy
+      update_column :deleted, true
+      clear_reply_to_ids
+    end
+
     protected
 
     def subscribe_replier
@@ -123,6 +128,12 @@ module Forem
 
     def spam
       user.update_column(:forem_state, "spam") if user
+    end
+
+    def clear_reply_to_ids
+      replies.each do |r|
+        r.update_attribute(:reply_to_id, nil)
+      end
     end
 
   end

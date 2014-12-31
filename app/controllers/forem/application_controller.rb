@@ -7,8 +7,9 @@ class Forem::ApplicationController < ApplicationController
   layout :layout_for_forem
 
   rescue_from CanCan::AccessDenied do |exception|
-    session[:return] = true
-    redirect_to main_app.social_profile_path, :alert => "To post on the MyApnea.Org forums and join the MyApnea.Org community, create your own social profile below."
+    redirect_to root_path, :alert => t("forem.access_denied")
+    # session[:return] = true
+    # redirect_to main_app.social_profile_path, :alert => "To post on the MyApnea.Org forums and join the MyApnea.Org community, create your own social profile below."
   end
 
   def current_ability
@@ -32,7 +33,8 @@ class Forem::ApplicationController < ApplicationController
   def authenticate_forem_user
     if !forem_user
       session["user_return_to"] = request.fullpath
-      flash.alert = "To post on the forum, you must be a registered MyApnea.Org user. [Click here](#{main_app.new_user_registration_path}) to join today!"
+      #flash.alert = "To post on the forum, you must be a registered MyApnea.Org user. [Click here](#{main_app.new_user_registration_path}) to join today!"
+      flash.alert = t("forem.errors.not_signed_in")
       devise_route = "new_#{Forem.user_class.to_s.underscore}_session_path"
       sign_in_path = Forem.sign_in_path ||
           (main_app.respond_to?(devise_route) && main_app.send(devise_route)) ||
